@@ -1,0 +1,49 @@
+var filteredAdmin2 = boundary.filter(ee.Filter.eq("state_name", "Lagos"));
+
+var geometry = filteredAdmin2.geometry();
+Map.centerObject(geometry, 11);
+Map.addLayer(geometry, {"color": "red"}, "geometry")
+
+// Filetering for May,2015
+var filteredVIIRS2015 = viirs.filter(ee.Filter.bounds(geometry))
+    .filter(ee.Filter.date('2015-05-01', '2015-06-01'))
+    .select('avg_rad');
+    
+    
+var may2015 = filteredVIIRS2015.first();
+var clipped2015 = may2015.clip(geometry);
+
+
+Map.addLayer(clipped2015, {}, "May 2015");
+
+
+// Filetering for May,2020
+var filteredVIIRS2015 = viirs.filter(ee.Filter.bounds(geometry))
+    .filter(ee.Filter.date('2020-05-01', '2020-06-01'))
+    .select('avg_rad');
+    
+    
+var may2020 = filteredVIIRS2015.first();
+var clipped2020 = may2020.clip(geometry)
+Map.addLayer(clipped2020, {}, "May 2020")
+
+
+//Exporting the Images
+
+Export.image.toDrive({
+  image: clipped2015,
+  description: 'May2015',
+  folder: 'GEE',
+  region: geometry,
+  scale: 10
+});
+
+
+Export.image.toDrive({
+  image: clipped2020,
+  description: 'May2020',
+  folder: 'GEE',
+  region: geometry,
+  scale: 10
+});
+  
